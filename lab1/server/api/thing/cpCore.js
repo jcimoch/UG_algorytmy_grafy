@@ -6,6 +6,7 @@
   var _ = require('lodash');
   var fs = require('fs');
   var points = JSON.parse(fs.readFileSync('/Users/Jarek/Desktop/UGFakultety/AlgorytmyP.Zylinski/lab1/server/components/pointsDataSource/pointsGenerated.json', 'utf8'));
+  //var points = JSON.parse(fs.readFileSync('/Users/Jarek/Desktop/UGFakultety/AlgorytmyP.Zylinski/lab1/server/components/pointsDataSource/points.json', 'utf8'));
 
   var sortPoints = function (points, coordinate) {
     return _.sortBy(points, coordinate);
@@ -23,6 +24,19 @@
     //console.log("boundaryPoints", temp);
     return temp;
   };
+  var partitionY = function(points,l){
+    var temp =[[],[]];
+    _.forEach(points,function(entry){
+      if(entry.x <= l){
+        temp[0].push(entry);
+      }
+      else{
+        temp[1].push(entry);
+      }
+    });
+    return temp;
+  };
+
   var partitionPoints = function (points) {
     var temp = [];
     //var start = new Date().getTime();
@@ -75,9 +89,12 @@
     //console.log("S1", S1);
     var S2 = partition[1]; // right part
     //console.log("S2", S2);
-    var resultOfS1 = closestPairRecursive(S1, sortedPointsByY); //left result
+    var S3 = partitionY(sortedPointsByY);
+    //console.log("S3", S3);
+
+    var resultOfS1 = closestPairRecursive(S1, S3[0]); //left result
     //console.log("actual resultOfS1", resultOfS1);
-    var resultOfS2 = closestPairRecursive(S2, sortedPointsByY); //right result
+    var resultOfS2 = closestPairRecursive(S2, S3[1]); //right result
     //console.log("actual resultOfS2", resultOfS2);
     var closestPair = resultOfS1.delta < resultOfS2.delta ? resultOfS1.closestPair : resultOfS2.closestPair;
     var delta = resultOfS1.delta < resultOfS2.delta ? resultOfS1.delta : resultOfS2.delta; //min{d(p1,p2),d(q1,q2)}
@@ -112,14 +129,15 @@
   //INITIAL SORT by X and Y
   var sortedByX = sortPoints(points.points, 'x');
   var sortedByY = sortPoints(points.points, 'y');
+  var start = new Date().getTime();
   var result = closestPairRecursive(sortedByX, sortedByY);
   console.log("result: ", result);
-  //var end = new Date().getTime();
-  //console.log('execution took', end - start);
-  //start = new Date().getTime();
-  // console.log(closestPairBruteForce(points.points));
-  // end = new Date().getTime();
-  //console.log('execution took', end - start);
+  var end = new Date().getTime();
+  console.log('execution took', end - start);
+  start = new Date().getTime();
+  console.log(closestPairBruteForce(points.points));
+  end = new Date().getTime();
+  console.log('execution took', end - start);
 
   var cpRecursive = {
     "closestPairRecursive": closestPairRecursive,

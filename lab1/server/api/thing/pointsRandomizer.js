@@ -15,7 +15,7 @@
     }
   };
 
-  var randomPoints = new RandomPoints(300, 99000);
+  var randomPoints = new RandomPoints(10000, 99000);
   var objToSave = JSON.stringify(randomPoints);
 
   fs.writeFile("../../components/pointsDataSource/pointsGenerated.json",objToSave, function (err) {
